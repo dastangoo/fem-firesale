@@ -1,6 +1,7 @@
 const marked = require('marked');
 const { remote, ipcRenderer } = require('electron');
 const mainProcess = remote.require('./main');
+const currentWindow = remote.getCurrentWebContents();
 
 const markdownView = document.querySelector('#markdown');
 const htmlView = document.querySelector('#html');
@@ -21,8 +22,20 @@ markdownView.addEventListener('keyup', (event) => {
 openFileButton.addEventListener('click', () => {
   // alert('I WILL ONE DAY OPEN A FILE');
   // remote.getGlobal('getFileFromUserSelection')();
-  mainProcess.openFile();
+  mainProcess.openFile(currentWindow);
+  /*
+  * This code doesn't work correctly
+  mainProcess.openFile(this);
+  */
 });
+
+newFileButton.addEventListener('click', () => {
+  mainProcess.createWindow();
+});
+
+/* This is a dangerous code
+newFileButton.addEventListener('click', mainProcess.createWindow());
+*/
 
 ipcRenderer.on('file-opened', (event, file, content) => {
   markdownView.value = content;
