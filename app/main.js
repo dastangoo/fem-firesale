@@ -5,7 +5,8 @@ const fs = require('fs');
 app.on('ready', () => {
   mainWindow = new BrowserWindow({ show: false });
 
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
+  // mainWindow.loadURL(`file://${__dirname}/index.html`);
+  mainWindow.webContents.loadURL(`file://${__dirname}/index.html`);
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
@@ -32,6 +33,7 @@ const getFileFromUserSelection = exports.getFileFromUserSelection =  () => {
 
   const file = files[0];
   const content = fs.readFileSync(file).toString();
-  console.log(content);
+  // console.log(content);
+  mainWindow.webContents.send('file-opened', file, content);
 };
 
