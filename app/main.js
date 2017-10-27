@@ -5,6 +5,8 @@ const { app, BrowserWindow, dialog } = require('electron');
 app.on('ready', () => {
   mainWindow = new BrowserWindow({ show: false });
 
+  mainWindow.loadURL(`file://${__dirname}/index.html`);
+
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
 
@@ -14,12 +16,16 @@ app.on('ready', () => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
-};
+});
 
 
 const getFileFromUserSelection = () => {
   const files = dialog.showOpenDialog(mainWindow, {
-    properties: ['openFile']
+    properties: ['openFile'],
+    filters: [
+      { name: 'Text Files', extensions: ['txt', 'text'] },
+      { name: 'Markdown Files', extensions: ['md', 'markdown'] }
+    ]
   });
 
   if (!files) return;
