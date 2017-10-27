@@ -2,7 +2,7 @@ const { app, BrowserWindow, dialog } = require('electron');
 const fs = require('fs');
 const windows = new Set();
 
-const createWindow = exports.createWindow = () => {
+const createWindow = exports.createWindow = (file) => {
   let newWindow = new BrowserWindow({ show: false });
   windows.add(newWindow);
 
@@ -10,6 +10,8 @@ const createWindow = exports.createWindow = () => {
   // newWindow.webContents.loadURL(`file://${__dirname}/index.html`);
 
   newWindow.once('ready-to-show', () => {
+
+    if(file) openFile(newWindow, file);
     newWindow.show();
 
     // getFileFromUserSelection();
@@ -55,12 +57,22 @@ const getFileFromUserSelection = exports.getFileFromUserSelection = (targetWindo
   return files[0];
 };
 
+const openFile = exports.openFile = (targetWindow, filePath) => {
+  const file = filePath || getFileFromUserSelection(targetWindow);
+  const content = fs.readFileSync(file).toString();
+
+  app.addRecentDocument(file);
+
+  targetWindow.webContents.send('file-opened', file, content);
+  targetWindow.setRepresentedFilename(file);
+};
+
 app.on('ready', () => {
   createWindow();
 });
 
-const openFile = exports.openFile = (targetWindow, filePath) => {
-  const file = filePath || getFileFromUserSelection(targetWindow);
-  const content = fs.readFileSync(file).toString();
-  targetWindow.webContents.send('file-opened', file, content);
-};
+app.on('will-finish-launching', () => {
+  app.on('open-file', (event, filePath) => {
+     createWindow(filePath);
+  });
+});
