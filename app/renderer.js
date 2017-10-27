@@ -24,7 +24,7 @@ const updateEditedState = (isEdited) => {
 
   saveMarkdownButton.disabled = !isEdited;
   revertButton.disabled = !isEdited;
-  
+
   let title = 'Fire Sale';
   if (filePath) title = `${filePath} - ${title}`;
   if (isEdited) title = `${title} (Edited)`;
@@ -49,6 +49,21 @@ openFileButton.addEventListener('click', () => {
 
 newFileButton.addEventListener('click', () => {
   mainProcess.createWindow();
+});
+
+
+saveMarkdownButton.addEventListener('click', () => {
+  mainProcess.saveMarkdown(currentWindow, filePath, markdownView.value);
+});
+
+// NOTE: It's not final yet and needs more review
+saveHtmlButton.addEventListener('click', () => {
+  mainProcess.saveHtml(currentWindow, filePath, htmlView.value);
+});
+
+// NOTE: It's not implemented yet
+revertButton.addEventListener('click', () => {
+  mainProcess.revert();
 });
 
 /* This is a dangerous code

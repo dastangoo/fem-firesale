@@ -67,6 +67,45 @@ const openFile = exports.openFile = (targetWindow, filePath) => {
   targetWindow.setRepresentedFilename(file);
 };
 
+const saveMarkdown = exports.saveMarkdown = (targetWindow, file, content) => {
+  if (!file) {
+    file = dialog.showSaveDialog(targetWindow, {
+      title: 'Save Markdown',
+      defaultPath: app.getPath('documents'),
+      filters: [
+        { name: 'Markdown Files', extensions: ['md', 'markdown']}
+      ]
+    });
+  }
+
+  if (!file) return;
+
+  fs.writeFileSync(file, content);
+  targetWindow.webContents.send('file-opened', file, content);
+};
+
+// NOTE: It's not final yet and needs more review
+const saveHtml = exports.saveHtml = (targetWindow, file, content) => {
+  if (!file) {
+    file = dialog.showSaveDialog(targetWindow, {
+      title: 'Save HTML',
+      defaultPath: app.getPath('documents'),
+      filters: [
+        { name: 'HTML Files', extensions: ['html', 'htm'] }
+      ]
+    });
+  }
+  if (!file) return;
+
+  fs.writeFileSync(file, content);
+  targetWindow.webContents.send('file-opened', file, content);
+};
+
+// NOTE: It's not implemented yet.
+const revert = exports.revert = () => {
+
+};
+
 app.on('ready', () => {
   createWindow();
 });
