@@ -21,10 +21,11 @@ markdownView.addEventListener('keyup', (event) => {
 openFileButton.addEventListener('click', () => {
   // alert('I WILL ONE DAY OPEN A FILE');
   // remote.getGlobal('getFileFromUserSelection')();
-  mainProcess.getFileFromUserSelection();
-  ipcRenderer.on('file-opened', (event, file, content) => {
-    markdownView.value = content;
-    renderMarkdownToHtml(content);
-    
-  });
+  mainProcess.openFile();
+});
+
+ipcRenderer.on('file-opened', (event, file, content) => {
+  markdownView.value = content;
+  renderMarkdownToHtml(content);
+
 });
