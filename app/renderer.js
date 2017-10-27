@@ -1,4 +1,7 @@
 const marked = require('marked');
+const { remote, ipcRenderer, shell } = require('electron');
+const mainProcess = remote.require('./main');
+const currentWindow = remote.getCurrentWindow();
 
 const markdownView = document.querySelector('#markdown');
 const htmlView = document.querySelector('#html');
@@ -15,3 +18,5 @@ const renderMarkdownToHtml = (markdown) => {
 markdownView.addEventListener('keyup', (event) => {
   renderMarkdownToHtml(event.target.value);
 });
+
+
