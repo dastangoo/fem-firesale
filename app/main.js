@@ -1,6 +1,8 @@
 const { app, BrowserWindow, dialog } = require('electron');
 const fs = require('fs');
+
 const windows = new Set();
+const fileWatchers = new Map();
 
 const createWindow = exports.createWindow = (file) => {
   let newWindow = new BrowserWindow({ show: false });
@@ -38,6 +40,7 @@ const createWindow = exports.createWindow = (file) => {
 
   newWindow.on('closed', () => {
     windows.delete(newWindow);
+    stopWatchingFiles(newWindow);
     newWindow = null;
   });
 };
@@ -62,6 +65,7 @@ const openFile = exports.openFile = (targetWindow, filePath) => {
   const content = fs.readFileSync(file).toString();
 
   app.addRecentDocument(file);
+  startWatchingFiles(targetWindow, file);
 
   targetWindow.webContents.send('file-opened', file, content);
   targetWindow.setRepresentedFilename(file);
@@ -106,6 +110,25 @@ const revert = exports.revert = () => {
 
 };
 
+const startWatchingFiles = (targetWindow, file) => {
+  stopWatchingFiles(targetWindow);
+  const watcher = fs.watch(file, (event) => {
+    if (event === 'change') {
+      const content = fs.readFileSync(file).toString();
+      targetWindow.webContents.send('file-changed', file, content);
+    }
+  });
+
+  fileWatchers.set(targetWindow, watcher);
+};
+
+
+const stopWatchingFiles = (targetWindow) => {
+  if (fileWatchers.has(targetWindow)) {
+    fileWatchers.get(targetWindow).close();
+    fileWatchers.delete(targetWindow);
+  }
+};
 app.on('ready', () => {
   createWindow();
 });
