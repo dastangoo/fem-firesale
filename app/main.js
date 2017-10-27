@@ -63,5 +63,4 @@ const openFile = exports.openFile = (targetWindow, filePath) => {
   const file = filePath || getFileFromUserSelection(targetWindow);
   const content = fs.readFileSync(file).toString();
   targetWindow.webContents.send('file-opened', file, content);
-  targetWindow.setTitle(`${file} - Fire Sale`);
 };
