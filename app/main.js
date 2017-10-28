@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog } = require('electron');
+const { app, BrowserWindow, dialog, Menu } = require('electron');
 const fs = require('fs');
 
 const windows = new Set();
@@ -130,6 +130,36 @@ const stopWatchingFiles = (targetWindow) => {
   }
 };
 app.on('ready', () => {
+  const template = [
+    {
+      label: 'Edit',
+      submenu: [
+        // {
+        //   label: 'Cut',
+        //   // click: function() { console.log('YOU CLICKED ME!!!!'); },
+        //   // click() { console.log('YOU CLICKED ME!!!!'); },
+        //   role: cut,
+        //   accelerator: 'CommandOrControl+X'
+        // }
+        {
+          label: 'Save',
+          click(item, focusedWindow) {
+            if (focusedWindow) focusedWindow.webContents.send('save-file');
+          },
+          accelerator: 'CommandOrControl+X'
+        }
+      ]
+    }
+  ];
+
+  if (process.platform === 'darwin') {
+    template.unshift({
+      label: 'No one will see me'
+    });
+  }
+  const applicationMenu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(applicationMenu);
+
   createWindow();
 });
 
