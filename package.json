@@ -10,7 +10,7 @@
   "devDependencies": {
     "devtron": "^1.4.0",
     "electron": "^1.4.6",
-    "electron-packager": "^8.2.0",
+    "electron-packager": "^8.7.2",
     "eslint": "^3.10.0"
   },
   "scripts": {
